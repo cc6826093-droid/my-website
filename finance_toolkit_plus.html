@@ -1,0 +1,232 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Finora — 金融计算工作台</title>
+<style>
+:root{--bg:#f4f6f8;--panel:#fff;--text:#17212b;--muted:#778391;--line:#e4e8ed;--accent:#0d1b2a;--soft:#edf1f5;--good:#18794e;--bad:#b42318;--shadow:0 8px 28px #1020330b}
+[data-theme="dark"]{--bg:#0b121a;--panel:#111c27;--text:#edf2f7;--muted:#9aabba;--line:#263646;--accent:#dbe7f3;--soft:#1b2a39;--good:#64d6a0;--bad:#ff8b83;--shadow:0 8px 28px #0003}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--text);font:14px/1.5 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI","Noto Sans SC",Arial,sans-serif}
+button,input,select{font:inherit}button{cursor:pointer}button:focus-visible,input:focus-visible,select:focus-visible{outline:2px solid #7d99b7;outline-offset:2px}
+.app{min-height:100vh;display:grid;grid-template-columns:238px minmax(0,1fr)}.sidebar{background:var(--panel);border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh;overflow:auto}
+.brand{display:flex;gap:10px;align-items:center;padding:2px 8px 22px;border-bottom:1px solid var(--line);margin-bottom:18px}.brand-mark{width:38px;height:38px;flex:0 0 38px;border-radius:10px;background:var(--accent);color:var(--panel);display:grid;place-items:center}.brand-mark svg{width:24px;height:24px;display:block}.brand b{font-size:15px;letter-spacing:.1px}.brand small{display:block;color:var(--muted);font-size:11px;margin-top:2px}
+.nav-label{font-size:10px;color:var(--muted);letter-spacing:1.2px;padding:0 10px 8px}.nav{display:grid;gap:4px}.nav button{border:0;background:transparent;color:var(--muted);text-align:left;display:flex;align-items:center;gap:11px;padding:10px;border-radius:8px;transition:background .15s,color .15s}.nav button:hover{background:var(--soft);color:var(--text)}.nav button.active{background:var(--soft);color:var(--text);font-weight:650}.nav .num{font-size:10px;width:22px;height:22px;display:grid;place-items:center;border:1px solid var(--line);border-radius:6px;color:var(--muted);flex-shrink:0}.sidebar-bottom{border-top:1px solid var(--line);margin-top:20px;padding:14px 8px 0;color:var(--muted);font-size:11px}
+main{min-width:0;padding:26px clamp(16px,3vw,42px) 48px;max-width:1500px;width:100%;margin:auto}.topbar{display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:25px}.eyebrow{font-size:11px;letter-spacing:1.5px;color:var(--muted);text-transform:uppercase}.topbar h1{font-size:clamp(22px,2.3vw,30px);margin:5px 0 0;letter-spacing:-.7px}.top-actions{display:flex;gap:8px}.btn{border:1px solid var(--line);background:var(--panel);color:var(--text);padding:9px 12px;border-radius:8px;font-weight:600;font-size:12px}.btn:hover{background:var(--soft)}.btn.primary{background:var(--accent);color:var(--panel);border-color:var(--accent)}.btn.small{padding:6px 9px;font-size:11px}.hero{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;margin-bottom:20px}.hero p{margin:5px 0 0;color:var(--muted);max-width:680px}.pill{border:1px solid var(--line);border-radius:99px;padding:5px 9px;color:var(--muted);font-size:11px;white-space:nowrap}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:13px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px}.panel h2{font-size:15px;margin:0 0 5px}.sub{color:var(--muted);font-size:12px;margin:0 0 18px}.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.field-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:15px}.field{min-width:0}.field label{display:block;font-weight:650;font-size:12px;margin-bottom:6px}.field input,.field select{width:100%;height:42px;border:1px solid var(--line);border-radius:8px;padding:0 11px;background:var(--bg);color:var(--text);font-variant-numeric:tabular-nums}.hint{display:block;color:var(--muted);font-size:11px;margin-top:5px;line-height:1.45}.section-head{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}.result{background:var(--soft);border:1px solid var(--line);border-radius:10px;padding:17px;margin-top:18px}.result-label{font-size:11px;color:var(--muted);margin-bottom:4px}.result-value{font-size:clamp(24px,3vw,35px);font-weight:750;letter-spacing:-.8px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.result-meta{display:flex;flex-wrap:wrap;gap:15px;margin-top:10px;color:var(--muted);font-size:12px}.result-meta strong{color:var(--text)}.result-actions{display:flex;justify-content:flex-end;margin-top:10px}.metric-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-top:14px}.metric{padding:13px;border:1px solid var(--line);border-radius:9px;min-width:0}.metric span{display:block;color:var(--muted);font-size:11px;margin-bottom:5px}.metric strong{font-size:17px;font-variant-numeric:tabular-nums;overflow-wrap:anywhere}.status{font-size:12px;font-weight:700;margin-top:9px}.status.good{color:var(--good)}.status.bad{color:var(--bad)}
+.calc-layout{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(240px,.95fr);gap:16px}.calc-display{border-radius:12px;background:var(--accent);color:var(--panel);padding:24px 22px;margin-bottom:16px;text-align:right;min-height:150px;display:flex;flex-direction:column;justify-content:space-between}.calc-expression{font-size:13px;opacity:.65;min-height:20px;overflow-wrap:anywhere}.calc-number{font-size:clamp(42px,6vw,64px);line-height:1.15;font-weight:700;letter-spacing:-1.4px;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.calc-edit{display:block;width:100%;border:0;outline:0!important;background:transparent;color:var(--panel);text-align:right;padding:0;margin:8px 0 0;min-width:0;border-radius:0}.calc-edit:focus{box-shadow:inset 0 -1px 0 #ffffff66}.calc-keys button{height:66px;font-size:20px}.calc-keys button.equal{font-size:24px}.calc-keys{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}.calc-keys button{height:54px;border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:8px;font-size:17px;font-weight:600}.calc-keys button:hover{background:var(--soft)}.calc-keys button.op{background:var(--soft)}.calc-keys button.equal{background:var(--accent);color:var(--panel);border-color:var(--accent)}.history-list{display:grid;gap:0;max-height:440px;overflow:auto}.history-item{padding:12px 2px;border-bottom:1px solid var(--line);display:flex;justify-content:space-between;gap:12px}.history-item:last-child{border-bottom:0}.history-item small{display:block;color:var(--muted);font-size:11px}.history-item strong{font-size:13px;font-variant-numeric:tabular-nums}.empty{color:var(--muted);padding:20px 0;font-size:12px;text-align:center}.table-wrap{overflow:auto;margin-top:16px}table{width:100%;border-collapse:collapse;font-size:12px;white-space:nowrap}th,td{padding:10px 12px;text-align:right;border-bottom:1px solid var(--line);font-variant-numeric:tabular-nums}th{color:var(--muted);font-weight:600;background:var(--bg)}th:first-child,td:first-child{text-align:left}.disclaimer{font-size:11px;color:var(--muted);margin-top:15px;line-height:1.6}.hidden{display:none!important}.modal{position:fixed;inset:0;background:#0009;display:none;align-items:center;justify-content:center;padding:20px;z-index:10}.modal.show{display:flex}.modal-box{background:var(--panel);color:var(--text);width:min(700px,100%);border-radius:16px;padding:30px;text-align:center;border:1px solid var(--line);box-shadow:0 20px 80px #0003}.modal-label{font-size:13px;color:var(--muted)}.modal-value{font-size:clamp(34px,8vw,68px);font-weight:800;letter-spacing:-2px;margin:16px 0;overflow-wrap:anywhere;font-variant-numeric:tabular-nums}.modal-note{font-size:13px;color:var(--muted);margin-bottom:20px}.modal-close{position:absolute;top:18px;right:20px;background:#fff;color:#111;border:0;border-radius:8px;padding:9px 13px}.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--accent);color:var(--panel);padding:10px 16px;border-radius:9px;z-index:20;font-size:12px;display:none}
+@media(max-width:850px){.app{grid-template-columns:1fr}.sidebar{height:auto;position:relative;padding:12px;border-right:0;border-bottom:1px solid var(--line)}.brand{padding:2px 6px 12px;margin-bottom:10px}.nav-label,.sidebar-bottom{display:none}.nav{display:flex;overflow-x:auto;padding-bottom:2px}.nav button{white-space:nowrap;flex-shrink:0;padding:8px}.nav .num{width:20px;height:20px}.nav button span:last-child{font-size:12px}main{padding-top:20px}.calc-layout{grid-template-columns:1fr}.history-list{max-height:220px}.topbar{align-items:flex-start}}@media(max-width:560px){.calc-display{min-height:138px;padding:20px 16px}.calc-keys button{height:58px;font-size:18px}.grid,.field-grid{grid-template-columns:1fr}.panel{padding:16px}.metric-grid{grid-template-columns:1fr}.hero{align-items:flex-start;flex-direction:column}.top-actions{flex-wrap:wrap}.calc-keys button{height:49px}}
+</style>
+</head>
+<body>
+<div class="app" id="app">
+<aside class="sidebar">
+  <div class="brand"><div class="brand-mark" aria-label="Finora 金融标志"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 19V5M4 19H21" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M7 15L11 11L14 13L20 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M16.5 6H20V9.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div><b>Finora</b><small>金融计算工作台</small></div></div>
+  <div class="nav-label">计算工具 · 9 项</div>
+  <nav class="nav" id="nav">
+    <button class="active" data-tab="calculator"><span class="num">01</span><span>大字计算器</span></button>
+    <button data-tab="loan"><span class="num">02</span><span>贷款还款计划</span></button>
+    <button data-tab="deposit"><span class="num">03</span><span>存款与复利</span></button>
+    <button data-tab="fx"><span class="num">04</span><span>汇率与汇款费用</span></button>
+    <button data-tab="dti"><span class="num">05</span><span>负债比与还款能力</span></button>
+    <button data-tab="irr"><span class="num">06</span><span>年化收益率 IRR</span></button>
+    <button data-tab="card"><span class="num">07</span><span>信用卡循环利息</span></button>
+    <button data-tab="apr"><span class="num">08</span><span>APR 与实际利率</span></button>
+    <button data-tab="business"><span class="num">09</span><span>生意利润与毛利率</span></button>
+  </nav>
+  <div class="sidebar-bottom">本地即时计算 · 不上传输入数据<br>结果用于估算，请以合同及机构规则为准。</div>
+</aside>
+<main>
+<header class="topbar"><div><div class="eyebrow">PERSONAL FINANCE / CALCULATORS</div><h1 id="page-title">大字计算器</h1></div><div class="top-actions"><button class="btn" id="theme-btn">◐ 切换外观</button></div></header>
+<section id="tab-calculator" class="tab">
+  <div class="hero"><div><h2>快速核算，逐笔留痕</h2><p>清晰按键布局、千分位显示与计算流水，支持键盘输入和连续运算。</p></div><span class="pill">键盘可操作</span></div>
+  <div class="calc-layout">
+    <div class="panel">
+      <div class="calc-display"><div class="calc-expression" id="calc-expression">准备就绪</div><input class="calc-number calc-edit" id="calc-display" type="text" inputmode="decimal" autocomplete="off" aria-label="可直接编辑的计算器数字" value="0"></div>
+      <div class="calc-keys" id="calc-keys">
+        <button class="op" data-key="AC">AC</button><button class="op" data-key="back">⌫</button><button class="op" data-key="±">±</button><button class="op" data-key="÷">÷</button>
+        <button data-key="7">7</button><button data-key="8">8</button><button data-key="9">9</button><button class="op" data-key="×">×</button>
+        <button data-key="4">4</button><button data-key="5">5</button><button data-key="6">6</button><button class="op" data-key="-">−</button>
+        <button data-key="1">1</button><button data-key="2">2</button><button data-key="3">3</button><button class="op" data-key="+">+</button>
+        <button data-key="0" style="grid-column:span 2">0</button><button data-key=".">.</button><button class="equal" data-key="=">=</button>
+      </div>
+      <div class="result-actions"><button class="btn small" id="calc-show">放大展示结果 ↗</button></div>
+    </div>
+    <div class="panel"><div class="section-head"><div><h2>计算流水</h2><p class="sub">本次打开页面期间保留，便于核对金额。</p></div><button class="btn small" id="clear-history">清空</button></div><div class="history-list" id="history-list"><div class="empty">还没有计算记录</div></div></div>
+  </div>
+</section>
+<section id="tab-loan" class="tab hidden">
+ <div class="hero"><div><h2>贷款还款计划</h2><p>比较本息平均与本金平均；宽限期按只付利息估算，宽限期后按剩余本金重新摊还。</p></div><span class="pill">月供估算</span></div>
+ <div class="grid"><div class="panel"><h2>贷款参数</h2><p class="sub">输入贷款金额、年利率与期限。</p><div class="field-grid">
+ <div class="field"><label for="loan-amount">贷款金额（万元）</label><input id="loan-amount" type="number" min="0" step="0.01" value="100"><small class="hint">例如 100 表示 100 万元。</small></div>
+ <div class="field"><label for="loan-rate">年利率（%）</label><input id="loan-rate" type="number" min="0" step="0.01" value="3.5"><small class="hint">请输入年利率百分数，不是小数。</small></div>
+ <div class="field"><label for="loan-years">贷款年期（年）</label><input id="loan-years" type="number" min="1" max="50" step="1" value="30"><small class="hint">期限按整年计算。</small></div>
+ <div class="field"><label for="loan-grace">宽限期（月）</label><input id="loan-grace" type="number" min="0" step="1" value="0"><small class="hint">宽限期内只付利息，不偿还本金。</small></div>
+ <div class="field"><label for="loan-mode">还款模式</label><select id="loan-mode"><option value="equal">本息平均摊还</option><option value="principal">本金平均摊还</option></select><small class="hint">两种模式的每月还款额不同。</small></div>
+ </div><div class="result" id="loan-result"></div><div class="result-actions"><button class="btn small show-result" data-result="loan-result">放大展示结果 ↗</button></div></div><div class="panel"><h2>还款明细预览</h2><p class="sub">显示前 12 期及最后一期。</p><div class="table-wrap" id="loan-table"></div><p class="disclaimer">假设按月计息、月利率为年利率除以 12，未计入保险、税费、浮动利率、提前还款费用等。不同机构的宽限期规则可能不同。</p></div></div>
+</section>
+<section id="tab-deposit" class="tab hidden">
+ <div class="hero"><div><h2>存款与复利终值</h2><p>计算一次性存入或定期定额投入的到期本利和与利息。</p></div><span class="pill">单利 / 月复利 / 年复利</span></div>
+ <div class="panel"><div class="field-grid">
+ <div class="field"><label for="dep-principal">初始本金</label><input id="dep-principal" type="number" min="0" value="10000"><small class="hint">一次性存入的本金，单位与下方定投金额相同。</small></div>
+ <div class="field"><label for="dep-payment">每期定投金额</label><input id="dep-payment" type="number" min="0" value="0"><small class="hint">每月月末投入；设为 0 即只计算初始本金。</small></div>
+ <div class="field"><label for="dep-rate">年利率（%）</label><input id="dep-rate" type="number" min="0" step="0.01" value="3"><small class="hint">以年利率百分数输入。</small></div>
+ <div class="field"><label for="dep-years">期限（年）</label><input id="dep-years" type="number" min="0.1" step="0.1" value="5"><small class="hint">定投按月投入，期限换算为月数。</small></div>
+ <div class="field"><label for="dep-mode">计息方式</label><select id="dep-mode"><option value="monthly">月复利</option><option value="annual">年复利</option><option value="simple">单利</option></select><small class="hint">年复利下，定投按每月等效收益率估算。</small></div>
+ </div><div class="result" id="dep-result"></div><div class="result-actions"><button class="btn small show-result" data-result="dep-result">放大展示结果 ↗</button></div></div>
+</section>
+<section id="tab-fx" class="tab hidden">
+ <div class="hero"><div><h2>汇率换算与汇款费用</h2><p>自行输入报价，双向换算，并估算扣除汇款手续费和邮电费后的到账金额。</p></div><span class="pill">手动汇率</span></div>
+ <div class="panel"><div class="field-grid">
+ <div class="field"><label for="fx-a">币种 A</label><select id="fx-a"></select><small class="hint">按币种代码或名称选择国际通用货币。</small></div>
+ <div class="field"><label for="fx-b">币种 B</label><select id="fx-b"></select><small class="hint">货币清单含常用 ISO 4217 货币；部分国家共用同一种货币。</small></div>
+ <div class="field"><label for="fx-rate">汇率：1 单位 A = ? 单位 B</label><input id="fx-rate" type="number" min="0.00000001" step="any" value="4.7"><small class="hint">请使用银行实际适用的买入价或卖出价。</small></div>
+ <div class="field"><label for="fx-amount">换算金额（币种 A）</label><input id="fx-amount" type="number" min="0" step="any" value="1000"><small class="hint">以币种 A 输入金额。</small></div>
+ <div class="field"><label for="fx-fee">汇款手续费（币种 B）</label><input id="fx-fee" type="number" min="0" step="any" value="20"><small class="hint">输入固定手续费。</small></div>
+ <div class="field"><label for="fx-post">邮电费（币种 B）</label><input id="fx-post" type="number" min="0" step="any" value="10"><small class="hint">不含中转行或收款行另行扣费。</small></div>
+ <div class="field"><label for="fx-direction">换算方向</label><select id="fx-direction"><option value="ab">A → B</option><option value="ba">B → A</option></select><small class="hint">费用按币种 B 计，并从 B 端金额扣除。</small></div>
+ </div><div class="result" id="fx-result"></div><div class="result-actions"><button class="btn small show-result" data-result="fx-result">放大展示结果 ↗</button></div><p class="disclaimer">此工具不获取实时汇率。跨境汇款可能存在中转行扣费、汇差及额外税费，请以实际报价为准。</p></div>
+</section>
+<section id="tab-dti" class="tab hidden">
+ <div class="hero"><div><h2>负债比与还款能力</h2><p>将其他债务与拟新增月供合并，评估每月收入覆盖债务的情况。</p></div><span class="pill">需按当地规则复核</span></div>
+ <div class="panel"><div class="field-grid">
+ <div class="field"><label for="dti-income">月收入</label><input id="dti-income" type="number" min="0" step="any" value="8000"><small class="hint">请输入可用于评估的月收入，金额单位保持一致。</small></div>
+ <div class="field"><label for="dti-other">其他负债月还款额</label><input id="dti-other" type="number" min="0" step="any" value="1000"><small class="hint">包括其他贷款、分期等每月应还金额。</small></div>
+ <div class="field"><label for="dti-new">本笔拟贷款月供</label><input id="dti-new" type="number" min="0" step="any" value="1800"><small class="hint">可从贷款还款计划工具取得估算值。</small></div>
+ <div class="field"><label for="dti-limit">内部负债比参考上限（%）</label><input id="dti-limit" type="number" min="1" max="100" step="1" value="40"><small class="hint">默认 40% 仅为示例，请替换为适用政策。</small></div>
+ <div class="field"><label for="dti-dbr">DBR 倍数参考值</label><input id="dti-dbr" type="number" min="1" step="1" value="22"><small class="hint">22 倍并非全球通用标准；仅在适用司法辖区及产品规则下使用。</small></div>
+ <div class="field"><label for="dti-debt">纳入 DBR 的无担保债务余额</label><input id="dti-debt" type="number" min="0" step="any" value="50000"><small class="hint">用于“月收入 × DBR 倍数”参考比较的债务余额。</small></div>
+ </div><div class="result" id="dti-result"></div><div class="result-actions"><button class="btn small show-result" data-result="dti-result">放大展示结果 ↗</button></div><p class="disclaimer">负债比（DTI）与 DBR 的定义和监管上限会因国家、产品、收入认定方式及机构政策不同而变化。本工具仅提供输入数据的数学比较，不代表授信审批结论。</p></div>
+</section>
+<section id="tab-irr" class="tab hidden">
+ <div class="hero"><div><h2>年化收益率 IRR</h2><p>估算定期投入或一次性投入的内部收益率，并转换为有效年化收益率。</p></div><span class="pill">现金流估算</span></div>
+ <div class="panel"><div class="field-grid">
+ <div class="field"><label for="irr-periods">投入期数</label><input id="irr-periods" type="number" min="1" max="1200" step="1" value="120"><small class="hint">每期按月计算，例如 120 期代表 10 年。</small></div>
+ <div class="field"><label for="irr-payment">每期投入金额</label><input id="irr-payment" type="number" min="0" step="any" value="500"><small class="hint">假设每期末投入，第一笔在第 1 期末。</small></div>
+ <div class="field"><label for="irr-final">到期领回金额</label><input id="irr-final" type="number" min="0" step="any" value="75000"><small class="hint">假设在最后一期末领回，含所有给付。</small></div>
+ <div class="field"><label for="irr-initial">额外初始投入</label><input id="irr-initial" type="number" min="0" step="any" value="0"><small class="hint">如有首日躉缴或初始费用，填入此项。</small></div>
+ </div><div class="result" id="irr-result"></div><div class="result-actions"><button class="btn small show-result" data-result="irr-result">放大展示结果 ↗</button></div><p class="disclaimer">按期末投入、最后一期收款的现金流时点求解；未计税费、保单费用、保障成本或非保证红利。IRR 不代表产品承诺回报。</p></div>
+</section>
+<section id="tab-card" class="tab hidden">
+ <div class="hero"><div><h2>信用卡最低应缴与循环利息</h2><p>估算只缴最低金额后的未还余额及每日循环利息。</p></div><span class="pill">按日估算</span></div>
+ <div class="panel"><div class="field-grid">
+ <div class="field"><label for="cc-balance">当期总账款</label><input id="cc-balance" type="number" min="0" step="any" value="5000"><small class="hint">当期账单总额。</small></div>
+ <div class="field"><label for="cc-spend">当期新增消费</label><input id="cc-spend" type="number" min="0" step="any" value="1000"><small class="hint">用于单独参考；若已包含在总账款中，不要重复加总。</small></div>
+ <div class="field"><label for="cc-min">最低还款比例（%）</label><input id="cc-min" type="number" min="0" max="100" step="0.1" value="5"><small class="hint">不同发卡机构可能设最低金额门槛或分项计算规则。</small></div>
+ <div class="field"><label for="cc-rate">年循环利率（%）</label><input id="cc-rate" type="number" min="0" step="0.01" value="18"><small class="hint">请使用信用卡协议中的年利率。</small></div>
+ <div class="field"><label for="cc-days">计息天数</label><input id="cc-days" type="number" min="1" step="1" value="30"><small class="hint">用于估算未还余额在该期间的利息。</small></div>
+ </div><div class="result" id="cc-result"></div><div class="result-actions"><button class="btn small show-result" data-result="cc-result">放大展示结果 ↗</button></div><p class="disclaimer">简化估算：假设最低还款额按总账款比例计算，未偿余额按年利率 / 365 按日计息。不含新消费入账时点、免息期失效、费用、最低还款额下限或复利规则。</p></div>
+</section>
+<section id="tab-apr" class="tab hidden">
+ <div class="hero"><div><h2>APR 与实际年利率</h2><p>转换名义利率与有效年利率，或按净放款额、分期付款反推现金流年化成本。</p></div><span class="pill">两种计算模式</span></div>
+ <div class="panel"><div class="field"><label for="apr-mode">计算模式</label><select id="apr-mode"><option value="rate">名义利率 → 实际年利率</option><option value="fee">手续费 / 分期 → 现金流年化成本</option></select><small class="hint">第二种模式按月等额付款、放款时一次扣费估算。</small></div>
+ <div id="apr-rate-fields" class="field-grid" style="margin-top:16px">
+ <div class="field"><label for="apr-nominal">名义年利率（%）</label><input id="apr-nominal" type="number" min="0" step="0.01" value="12"><small class="hint">输入不含复利频率调整的年利率。</small></div>
+ <div class="field"><label for="apr-frequency">一年复利次数</label><select id="apr-frequency"><option value="1">每年 1 次</option><option value="2">每年 2 次</option><option value="4">每年 4 次</option><option value="12" selected>每月 1 次</option><option value="365">每日 1 次</option></select><small class="hint">有效年利率 = (1 + 名义利率 / m)^m − 1。</small></div>
+ </div>
+ <div id="apr-fee-fields" class="field-grid hidden" style="margin-top:16px">
+ <div class="field"><label for="apr-principal">贷款名义金额</label><input id="apr-principal" type="number" min="0" step="any" value="10000"><small class="hint">合同上的贷款金额。</small></div>
+ <div class="field"><label for="apr-fee">一次性手续费</label><input id="apr-fee" type="number" min="0" step="any" value="300"><small class="hint">假设放款时直接扣除，净到手金额减少。</small></div>
+ <div class="field"><label for="apr-years">还款期限（年）</label><input id="apr-years" type="number" min="1" max="50" step="1" value="2"><small class="hint">按月还款，等额本息。</small></div>
+ <div class="field"><label for="apr-rate2">合同年利率（%）</label><input id="apr-rate2" type="number" min="0" step="0.01" value="6"><small class="hint">用于估算合同月供。</small></div>
+ </div>
+ <div class="result" id="apr-result"></div><div class="result-actions"><button class="btn small show-result" data-result="apr-result">放大展示结果 ↗</button></div><p class="disclaimer">监管口径下的 APR 可能要求纳入特定费用、现金流时点、日数规则及法定公式。这里的手续费模式是基于月度现金流的年化成本估算，不替代法定披露 APR。</p></div>
+</section>
+
+<section id="tab-business" class="tab hidden">
+ <div class="hero"><div><h2>生意利润与毛利率</h2><p>计算成本、售价、毛利、毛利率、加价率与折扣后的售价，适合零售、电商和日常生意核算。</p></div><span class="pill">经营计算</span></div>
+ <div class="panel"><div class="field-grid">
+ <div class="field"><label for="biz-cost">单件成本</label><input id="biz-cost" type="number" min="0" step="any" value="60"><small class="hint">包含你希望计入的采购或生产成本。</small></div>
+ <div class="field"><label for="biz-price">销售价格</label><input id="biz-price" type="number" min="0" step="any" value="100"><small class="hint">每件商品实际销售价格，单位与成本一致。</small></div>
+ <div class="field"><label for="biz-qty">销售数量</label><input id="biz-qty" type="number" min="0" step="1" value="10"><small class="hint">用于计算整批销售额、成本和毛利。</small></div>
+ <div class="field"><label for="biz-discount">折扣（%）</label><input id="biz-discount" type="number" min="0" max="100" step="0.1" value="0"><small class="hint">对原销售价格应用的折扣比例。</small></div>
+ <div class="field"><label for="biz-extra">每件额外成本</label><input id="biz-extra" type="number" min="0" step="any" value="0"><small class="hint">例如包装、平台费或每件物流成本；按固定金额计入成本。</small></div>
+ <div class="field"><label for="biz-target">目标毛利率（%）</label><input id="biz-target" type="number" min="0" max="99.99" step="0.1" value="30"><small class="hint">用于反推达到目标毛利率所需的售价。</small></div>
+ </div><div class="result" id="biz-result"></div><div class="result-actions"><button class="btn small show-result" data-result="biz-result">放大展示结果 ↗</button></div>
+ <p class="disclaimer">毛利未自动扣除租金、工资、税费、广告费等固定或其他运营开支。若平台费按销售额百分比收取，应另行纳入成本模型。</p></div>
+</section>
+
+<footer class="disclaimer">计算结果仅供估算与沟通使用，不构成贷款、投资、保险或税务建议。请以金融机构正式报价、合同条款及当地适用法规为准。</footer>
+</main></div>
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-label="结果展示"><button class="modal-close" id="modal-close">关闭 ×</button><div class="modal-box"><div class="modal-label" id="modal-label">计算结果</div><div class="modal-value" id="modal-value">—</div><div class="modal-note" id="modal-note"></div><button class="btn primary" id="modal-ok">返回工作台</button></div></div><div class="toast" id="toast"></div>
+<script>
+'use strict';
+const $=id=>document.getElementById(id);
+const num=id=>{const v=Number($(id).value);return Number.isFinite(v)?v:NaN};
+const fmt=(v,d=2)=>Number.isFinite(v)?v.toLocaleString('en-US',{minimumFractionDigits:d,maximumFractionDigits:d}):'无法计算';
+const money=(v,d=2)=>fmt(v,d);
+const pct=(v,d=2)=>Number.isFinite(v)?fmt(v,d)+'%':'无法计算';
+const val=(id)=>$(id).value;
+function resultBox(id,main,metrics=[],status=''){const el=$(id);el.innerHTML='<div class="result-label">计算结果</div><div class="result-value">'+main+'</div>'+(metrics.length?'<div class="metric-grid">'+metrics.map(m=>'<div class="metric"><span>'+m[0]+'</span><strong>'+m[1]+'</strong></div>').join('')+'</div>':'')+(status?'<div class="status '+status[1]+'">'+status[0]+'</div>':'');el.dataset.main=main;el.dataset.label=el.closest('.tab')?.querySelector('h2')?.textContent||'计算结果';el.dataset.note=metrics.map(m=>m[0]+': '+m[1]).join(' · ')}
+function errBox(id,msg){resultBox(id,msg)}
+function validNonnegative(...xs){return xs.every(x=>Number.isFinite(x)&&x>=0)}
+function annuityPayment(p,r,n){if(n<=0)return NaN;if(r===0)return p/n;const q=Math.pow(1+r,n);return p*r*q/(q-1)}
+function loanSchedule(P,annual,months,grace,mode){const r=annual/1200, g=Math.min(grace,months), rem=months-g, rows=[];let bal=P,total=0,interestTotal=0;for(let m=1;m<=months;m++){let interest=bal*r,principal=0,pay;if(m<=g){pay=interest}else if(rem>0&&mode==='equal'){const fixed=annuityPayment(P,r,rem);pay=Math.min(bal+interest,fixed);principal=pay-interest}else if(rem>0){principal=m===months?bal:P/rem;pay=principal+interest}else{pay=interest}if(m>g&&m===months)principal=bal; if(m>g&&mode==='equal'&&m===months){pay=bal+interest;principal=bal}bal=Math.max(0,bal-principal);total+=pay;interestTotal+=interest;rows.push({m,pay,principal,interest,bal})}return{rows,total,interestTotal,first:rows[0]?.pay||0,after:rows[g]?.pay||rows[0]?.pay||0}}
+function updateLoan(){let P=num('loan-amount')*10000,annual=num('loan-rate'),years=num('loan-years'),grace=num('loan-grace'),mode=val('loan-mode');if(!validNonnegative(P,annual,years,grace)||P<=0||years<=0||!Number.isInteger(grace)||grace>=years*12){errBox('loan-result','请检查输入：贷款金额和期限须大于 0，宽限期须小于总期数。');$('loan-table').innerHTML='';return}let s=loanSchedule(P,annual,years*12,grace,mode);resultBox('loan-result','月供 '+money(s.after),[['首期应还',money(s.first)],['预计总利息',money(s.interestTotal)],['预计还款总额',money(s.total)],['宽限期后月供',money(s.after)]]);let chosen=[...s.rows.slice(0,12)];if(s.rows.length>12)chosen.push(s.rows[s.rows.length-1]);$('loan-table').innerHTML='<table><thead><tr><th>期数</th><th>月供</th><th>偿还本金</th><th>利息</th><th>剩余本金</th></tr></thead><tbody>'+chosen.map(x=>`<tr><td>${x.m}</td><td>${money(x.pay)}</td><td>${money(x.principal)}</td><td>${money(x.interest)}</td><td>${money(x.bal)}</td></tr>`).join('')+'</tbody></table>'}
+function updateDeposit(){let p=num('dep-principal'),pay=num('dep-payment'),rate=num('dep-rate')/100,years=num('dep-years'),mode=val('dep-mode');if(!validNonnegative(p,pay,rate,years)||years<=0){errBox('dep-result','请填写有效的非负金额、利率与正数期限。');return}let n=Math.round(years*12),fvP,fvA,periodRate;if(mode==='simple'){fvP=p*(1+rate*years);fvA=pay*n+pay*rate*(n*(n+1)/2)/12}else if(mode==='annual'){fvP=p*Math.pow(1+rate,years);periodRate=Math.pow(1+rate,1/12)-1;fvA=periodRate===0?pay*n:pay*(Math.pow(1+periodRate,n)-1)/periodRate}else{periodRate=rate/12;fvP=p*Math.pow(1+periodRate,n);fvA=periodRate===0?pay*n:pay*(Math.pow(1+periodRate,n)-1)/periodRate}let total=fvP+fvA, invested=p+pay*n;resultBox('dep-result','到期本利和 '+money(total),[['累计投入',money(invested)],['净赚利息',money(total-invested)],['累计定投',money(pay*n)],['计算期数',n+' 个月']])}
+function updateFX(){let a=val('fx-a').trim().toUpperCase()||'A',b=val('fx-b').trim().toUpperCase()||'B',r=num('fx-rate'),amount=num('fx-amount'),fee=num('fx-fee'),post=num('fx-post'),dir=val('fx-direction');if(!validNonnegative(r,amount,fee,post)||r<=0){errBox('fx-result','请填写大于 0 的汇率，以及有效金额和费用。');return}let gross=dir==='ab'?amount*r:amount/r;let netB=dir==='ab'?gross-fee-post:amount-fee-post;let netA=dir==='ab'?netB/r:netB*r;resultBox('fx-result',dir==='ab'?`${money(gross)} ${b}`:`${money(gross)} ${a}`,[['换算方向',dir==='ab'?a+' → '+b:b+' → '+a],['汇款手续费 + 邮电费',money(fee+post)+' '+b],['扣费后 B 币金额',money(netB)+' '+b],['扣费后折合 A 币',money(netA)+' '+a]],netB<0?['费用高于可用金额，请核对输入。','bad']:'')}
+function updateDTI(){let income=num('dti-income'),other=num('dti-other'),fresh=num('dti-new'),limit=num('dti-limit'),multiple=num('dti-dbr'),debt=num('dti-debt');if(!validNonnegative(income,other,fresh,limit,multiple,debt)||income<=0||limit<=0||multiple<=0){errBox('dti-result','请填写有效输入，月收入及参考上限必须大于 0。');return}let total=other+fresh,ratio=total/income*100,cap=income*limit/100,dbrCap=income*multiple;let pass=total<=cap;resultBox('dti-result','负债比 '+pct(ratio),[['其他负债月还款',money(other)],['含本笔月还款',money(total)],['月收入扣除债务后',money(income-total)],['参考月还款上限',money(cap)],['DBR 倍数余额参考上限',money(dbrCap)]],[pass?'按所设负债比参考值：通过':'按所设负债比参考值：超出',''+(pass?'good':'bad')]);let st=$('dti-result').querySelector('.status');if(debt>dbrCap){st.textContent+='；输入债务余额超过 DBR 参考线'}else{st.textContent+='；输入债务余额未超过 DBR 参考线'}}
+function irrMonthly(payment,periods,final,initial){let f=r=>{let sum=-initial;for(let t=1;t<=periods;t++)sum-=payment/Math.pow(1+r,t);sum+=final/Math.pow(1+r,periods);return sum};let lo=-.999999,hi=1;let flo=f(lo),fhi=f(hi);for(let i=0;i<80&&flo*fhi>0&&hi<1e6;i++){hi=hi*2+0.1;fhi=f(hi)}if(!Number.isFinite(flo)||!Number.isFinite(fhi)||flo*fhi>0)return NaN;for(let i=0;i<180;i++){let mid=(lo+hi)/2,fm=f(mid);if(!Number.isFinite(fm))return NaN;if(Math.abs(fm)<1e-9)return mid;if(flo*fm<=0){hi=mid;fhi=fm}else{lo=mid;flo=fm}}return (lo+hi)/2}
+function updateIRR(){let n=num('irr-periods'),p=num('irr-payment'),f=num('irr-final'),initial=num('irr-initial');if(!validNonnegative(n,p,f,initial)||n<1||!Number.isInteger(n)||n>1200||p+initial<=0){errBox('irr-result','请检查期数（1–1200 的整数）及投入金额。');return}let r=irrMonthly(p,n,f,initial);if(!Number.isFinite(r)||r<=-1){errBox('irr-result','这些现金流无法求得有效的 IRR，请检查投入和领回金额。');return}let annual=(Math.pow(1+r,12)-1)*100;resultBox('irr-result','有效年化收益率 '+pct(annual),[['月度 IRR',pct(r*100)],['总投入',money(initial+p*n)],['到期领回',money(f)],['投入与领回差额',money(f-initial-p*n)]],annual<0?['估算收益为负。','bad']:'')}
+function updateCard(){let balance=num('cc-balance'),spend=num('cc-spend'),minp=num('cc-min'),rate=num('cc-rate'),days=num('cc-days');if(!validNonnegative(balance,spend,minp,rate,days)||minp>100||days<1||!Number.isInteger(days)){errBox('cc-result','请检查账款、比例、利率与计息天数。');return}let minimum=balance*minp/100,remaining=Math.max(0,balance-minimum),daily=remaining*rate/100/365,interest=daily*days;resultBox('cc-result','每日利息 '+money(daily),[['最低应缴估算',money(minimum)],['缴款后未还余额',money(remaining)],['每日循环利息',money(daily)],[''+days+' 天利息估算',money(interest)],['当期新增消费（参考）',money(spend)]])}
+function solveIRR(cashflow){let f=r=>cashflow.reduce((s,c,i)=>s+c/Math.pow(1+r,i),0);let lo=-.999999,hi=1,fl=f(lo),fh=f(hi);for(let j=0;j<80&&fl*fh>0&&hi<1e7;j++){hi=hi*2+0.1;fh=f(hi)}if(!Number.isFinite(fl)||!Number.isFinite(fh)||fl*fh>0)return NaN;for(let j=0;j<180;j++){let mid=(lo+hi)/2,fm=f(mid);if(Math.abs(fm)<1e-8)return mid;if(fl*fm<=0){hi=mid;fh=fm}else{lo=mid;fl=fm}}return(lo+hi)/2}
+function updateAPR(){let mode=val('apr-mode');$('apr-rate-fields').classList.toggle('hidden',mode!=='rate');$('apr-fee-fields').classList.toggle('hidden',mode!=='fee');if(mode==='rate'){let nominal=num('apr-nominal')/100,m=num('apr-frequency');if(!validNonnegative(nominal,m)||m<=0){errBox('apr-result','请填写有效的名义利率与复利次数。');return}let effective=(Math.pow(1+nominal/m,m)-1)*100;resultBox('apr-result','实际年利率 '+pct(effective),[['名义年利率',pct(nominal*100)],['一年复利次数',m+' 次'],['每期利率',pct(nominal/m*100)],['实际年收益率',pct(effective)]])}else{let p=num('apr-principal'),fee=num('apr-fee'),years=num('apr-years'),rate=num('apr-rate2')/1200;if(!validNonnegative(p,fee,years,rate)||p<=0||years<=0||fee>=p){errBox('apr-result','请确保贷款金额和期限大于 0，手续费小于贷款金额。');return}let n=Math.round(years*12),payment=annuityPayment(p,rate,n),net=p-fee,flows=[net,...Array.from({length:n},()=>-payment)],rm=solveIRR(flows);if(!Number.isFinite(rm)||rm<=-1){errBox('apr-result','无法求得现金流年化成本，请检查输入。');return}let eff=(Math.pow(1+rm,12)-1)*100;resultBox('apr-result','现金流年化成本 '+pct(eff),[['合同月供估算',money(payment)],['净到手金额',money(net)],['预计总还款',money(payment*n)],['月度现金流 IRR',pct(rm*100)],['有效年化成本',pct(eff)]])}}
+const updateMap={loan:updateLoan,deposit:updateDeposit,fx:updateFX,dti:updateDTI,irr:updateIRR,card:updateCard,apr:updateAPR};
+function updateAll(){Object.values(updateMap).forEach(fn=>fn())}
+document.querySelectorAll('#nav button').forEach(btn=>btn.addEventListener('click',()=>{document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b===btn));document.querySelectorAll('.tab').forEach(t=>t.classList.add('hidden'));$('tab-'+btn.dataset.tab).classList.remove('hidden');$('page-title').textContent=btn.querySelector('span:last-child').textContent;if(updateMap[btn.dataset.tab])updateMap[btn.dataset.tab]()}));
+$('theme-btn').addEventListener('click',()=>{let dark=document.documentElement.dataset.theme!=='dark';document.documentElement.dataset.theme=dark?'dark':'light';$('theme-btn').textContent=dark?'☼ 切换浅色':'◐ 切换深色'});
+document.querySelectorAll('.tab input,.tab select').forEach(el=>el.addEventListener('input',()=>{let tab=el.closest('.tab').id.replace('tab-','');if(updateMap[tab])updateMap[tab]()}));
+$('apr-mode').addEventListener('change',updateAPR);
+let calc={display:'0',stored:null,operator:null,waiting:false,expression:'',history:[]};
+function showCalc(){const el=$('calc-display');if(document.activeElement!==el)el.value=calc.display;$('calc-expression').textContent=calc.expression||'准备就绪'}
+function rawNum(){return Number(String(calc.display).replace(/,/g,''))}
+function setCalc(n){if(!Number.isFinite(n)){calc.display='错误';calc.stored=null;calc.operator=null;calc.waiting=true;calc.expression='无效运算';showCalc();return}calc.display=String(Number(n.toPrecision(12)));if(Math.abs(n)>=1e15||Math.abs(n)>0&&Math.abs(n)<1e-7)calc.display=n.toExponential(6);calc.display=calc.display.includes('e')?calc.display:Number(calc.display).toLocaleString('en-US',{maximumFractionDigits:10});showCalc()}
+function calcInput(k){let x=rawNum();if(k==='back'){let s=String(calc.display).replace(/,/g,'');if(calc.waiting){calc.display='0';calc.waiting=false}else{s=s.slice(0,-1);calc.display=(!s||s==='-')?'0':s}showCalc();return}if(k>='0'&&k<='9'||k==='.'){if(calc.waiting){calc.display=k==='.'?'0.':k;calc.waiting=false}else if(k==='.'&&!calc.display.includes('.'))calc.display=calc.display.replace(/,/g,'')+'.';else if(k!=='.')calc.display=calc.display==='0'?k:calc.display.replace(/,/g,'')+k;calc.display=calc.display.includes('.')?calc.display.replace(/\B(?=(\d{3})+(?!\d))/g,','):Number(calc.display.replace(/,/g,'')).toLocaleString('en-US');showCalc();return}
+if(k==='AC'){calc={...calc,display:'0',stored:null,operator:null,waiting:false,expression:''};showCalc();return}
+if(k==='±'){setCalc(-x);return}if(k==='%'){setCalc(x/100);return}
+if(['+','-','×','÷'].includes(k)){if(calc.operator&&!calc.waiting)doCalc(false);calc.stored=rawNum();calc.operator=k;calc.waiting=true;calc.expression=fmt(calc.stored,8).replace(/\.?0+$/,'')+' '+k;showCalc();return}
+if(k==='='){if(calc.operator===null)return;let a=calc.stored,b=rawNum(),op=calc.operator,ans=op==='+'?a+b:op==='-'?a-b:op==='×'?a*b: b===0?NaN:a/b;let exp=fmt(a,8).replace(/\.?0+$/,'')+' '+op+' '+fmt(b,8).replace(/\.?0+$/,'');setCalc(ans);calc.expression=exp+' =';calc.history.unshift({exp,ans:calc.display,time:new Date().toLocaleTimeString('zh-CN',{hour:'2-digit',minute:'2-digit',second:'2-digit'})});calc.history=calc.history.slice(0,100);calc.stored=null;calc.operator=null;calc.waiting=true;renderHistory();showCalc()}}
+function doCalc(){calcInput('=')}
+$('calc-keys').addEventListener('click',e=>{let b=e.target.closest('button[data-key]');if(b)calcInput(b.dataset.key)});
+$('calc-display').addEventListener('focus',()=>{const el=$('calc-display');const pos=el.selectionStart??el.value.length;const before=el.value.slice(0,pos);const removed=(before.match(/,/g)||[]).length;el.value=String(calc.display).replace(/,/g,'');const next=Math.max(0,pos-removed);el.setSelectionRange(next,next)});
+$('calc-display').addEventListener('input',e=>{let raw=e.target.value.replace(/,/g,'').replace(/[^0-9.\-]/g,'');let minus=raw.startsWith('-')?'-':'';raw=raw.replace(/-/g,'');let parts=raw.split('.');raw=minus+parts.shift()+(parts.length?'.'+parts.join(''):'');if(raw===''||raw==='-'){calc.display=raw||'0';return}if(raw==='.'||raw==='-.'){calc.display=raw;return}if(Number.isFinite(Number(raw))){calc.display=raw;calc.waiting=false}});
+$('calc-display').addEventListener('blur',()=>{let raw=String($('calc-display').value).replace(/,/g,'');if(raw===''||raw==='-'||raw==='.'||raw==='-.')raw='0';if(Number.isFinite(Number(raw))){let n=Number(raw);calc.display=raw.includes('.')&&raw.endsWith('.')?raw:(n.toLocaleString('en-US',{maximumFractionDigits:10}));}else calc.display='0';showCalc()});
+$('calc-display').addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();let raw=String($('calc-display').value).replace(/,/g,'');if(Number.isFinite(Number(raw))){calc.display=raw;showCalc();if(calc.operator)calcInput('=')}$('calc-display').blur()}});
+
+document.addEventListener('keydown',e=>{if(e.target===$('calc-display'))return;if(!$('tab-calculator').classList.contains('hidden')){if(/^[0-9.]$/.test(e.key))calcInput(e.key);else if(['+','-','*','/'].includes(e.key)){calcInput(({ '*':'×','/':'÷' })[e.key]||e.key)}else if(e.key==='Enter'||e.key==='='){e.preventDefault();calcInput('=')}else if(e.key==='Escape')calcInput('AC');else if(e.key==='Backspace'){calc.display=calc.display.replace(/,/g,'').slice(0,-1)||'0';calc.display=Number(calc.display).toLocaleString('en-US');showCalc()}}});
+function renderHistory(){$('history-list').innerHTML=calc.history.length?calc.history.map((h,i)=>`<div class="history-item"><div><small>${h.time}</small><span>${h.exp} =</span></div><strong>${h.ans}</strong></div>`).join(''):'<div class="empty">还没有计算记录</div>'}
+$('clear-history').addEventListener('click',()=>{calc.history=[];renderHistory()});
+function showModal(label,value,note=''){ $('modal-label').textContent=label;$('modal-value').textContent=value;$('modal-note').textContent=note;$('modal').classList.add('show')}
+$('calc-show').addEventListener('click',()=>showModal('计算器当前结果',$('calc-display').value,$('calc-expression').textContent));
+document.querySelectorAll('.show-result').forEach(b=>b.addEventListener('click',()=>{let e=$(b.dataset.result);showModal(e.dataset.label||'计算结果',e.dataset.main||'—',e.dataset.note||'')}));
+function closeModal(){$('modal').classList.remove('show')}$('modal-close').addEventListener('click',closeModal);$('modal-ok').addEventListener('click',closeModal);$('modal').addEventListener('click',e=>{if(e.target===$('modal'))closeModal()});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal()});
+
+const currencies = [
+["AED","阿联酋迪拉姆"],["AFN","阿富汗尼"],["ALL","阿尔巴尼亚列克"],["AMD","亚美尼亚德拉姆"],["ANG","荷属安的列斯盾"],["AOA","安哥拉宽扎"],["ARS","阿根廷比索"],["AUD","澳大利亚元"],["AWG","阿鲁巴弗罗林"],["AZN","阿塞拜疆马纳特"],
+["BAM","波黑可兑换马克"],["BBD","巴巴多斯元"],["BDT","孟加拉塔卡"],["BGN","保加利亚列弗"],["BHD","巴林第纳尔"],["BIF","布隆迪法郎"],["BMD","百慕大元"],["BND","文莱元"],["BOB","玻利维亚诺"],["BRL","巴西雷亚尔"],["BSD","巴哈马元"],["BTN","不丹努尔特鲁姆"],["BWP","博茨瓦纳普拉"],["BYN","白俄罗斯卢布"],["BZD","伯利兹元"],
+["CAD","加拿大元"],["CDF","刚果法郎"],["CHF","瑞士法郎"],["CLP","智利比索"],["CNY","人民币"],["COP","哥伦比亚比索"],["CRC","哥斯达黎加科朗"],["CUP","古巴比索"],["CVE","佛得角埃斯库多"],["CZK","捷克克朗"],
+["DJF","吉布提法郎"],["DKK","丹麦克朗"],["DOP","多米尼加比索"],["DZD","阿尔及利亚第纳尔"],
+["EGP","埃及镑"],["ERN","厄立特里亚纳克法"],["ETB","埃塞俄比亚比尔"],["EUR","欧元"],
+["FJD","斐济元"],["FKP","福克兰群岛镑"],["GBP","英镑"],["GEL","格鲁吉亚拉里"],["GHS","加纳塞地"],["GIP","直布罗陀镑"],["GMD","冈比亚达拉西"],["GNF","几内亚法郎"],["GTQ","危地马拉格查尔"],["GYD","圭亚那元"],
+["HKD","港元"],["HNL","洪都拉斯伦皮拉"],["HTG","海地古德"],["HUF","匈牙利福林"],
+["IDR","印度尼西亚盾"],["ILS","以色列新谢克尔"],["INR","印度卢比"],["IQD","伊拉克第纳尔"],["IRR","伊朗里亚尔"],["ISK","冰岛克朗"],
+["JMD","牙买加元"],["JOD","约旦第纳尔"],["JPY","日元"],
+["KES","肯尼亚先令"],["KGS","吉尔吉斯斯坦索姆"],["KHR","柬埔寨瑞尔"],["KMF","科摩罗法郎"],["KPW","朝鲜圆"],["KRW","韩元"],["KWD","科威特第纳尔"],["KYD","开曼群岛元"],["KZT","哈萨克斯坦坚戈"],
+["LAK","老挝基普"],["LBP","黎巴嫩镑"],["LKR","斯里兰卡卢比"],["LRD","利比里亚元"],["LSL","莱索托洛蒂"],["LYD","利比亚第纳尔"],
+["MAD","摩洛哥迪拉姆"],["MDL","摩尔多瓦列伊"],["MGA","马达加斯加阿里亚里"],["MKD","北马其顿代纳尔"],["MMK","缅甸缅元"],["MNT","蒙古图格里克"],["MOP","澳门元"],["MRU","毛里塔尼亚乌吉亚"],["MUR","毛里求斯卢比"],["MVR","马尔代夫拉菲亚"],["MWK","马拉维克瓦查"],["MXN","墨西哥比索"],["MYR","马来西亚令吉"],["MZN","莫桑比克梅蒂卡尔"],
+["NAD","纳米比亚元"],["NGN","尼日利亚奈拉"],["NIO","尼加拉瓜科多巴"],["NOK","挪威克朗"],["NPR","尼泊尔卢比"],["NZD","新西兰元"],
+["OMR","阿曼里亚尔"],["PAB","巴拿马巴波亚"],["PEN","秘鲁索尔"],["PGK","巴布亚新几内亚基那"],["PHP","菲律宾比索"],["PKR","巴基斯坦卢比"],["PLN","波兰兹罗提"],["PYG","巴拉圭瓜拉尼"],["QAR","卡塔尔里亚尔"],
+["RON","罗马尼亚列伊"],["RSD","塞尔维亚第纳尔"],["RUB","俄罗斯卢布"],["RWF","卢旺达法郎"],
+["SAR","沙特里亚尔"],["SBD","所罗门群岛元"],["SCR","塞舌尔卢比"],["SDG","苏丹镑"],["SEK","瑞典克朗"],["SGD","新加坡元"],["SHP","圣赫勒拿镑"],["SLE","塞拉利昂利昂"],["SOS","索马里先令"],["SRD","苏里南元"],["SSP","南苏丹镑"],["STN","圣多美和普林西比多布拉"],["SYP","叙利亚镑"],["SZL","斯威士兰里兰吉尼"],
+["THB","泰铢"],["TJS","塔吉克斯坦索莫尼"],["TMT","土库曼斯坦马纳特"],["TND","突尼斯第纳尔"],["TOP","汤加潘加"],["TRY","土耳其里拉"],["TTD","特立尼达和多巴哥元"],["TWD","新台币"],["TZS","坦桑尼亚先令"],
+["UAH","乌克兰格里夫纳"],["UGX","乌干达先令"],["USD","美元"],["UYU","乌拉圭比索"],["UZS","乌兹别克斯坦苏姆"],
+["VES","委内瑞拉玻利瓦尔"],["VND","越南盾"],["VUV","瓦努阿图瓦图"],
+["WST","萨摩亚塔拉"],["XAF","中非法郎"],["XCD","东加勒比元"],["XCG","加勒比盾"],["XOF","西非法郎"],["XPF","太平洋法郎"],["YER","也门里亚尔"],["ZAR","南非兰特"],["ZMW","赞比亚克瓦查"],["ZWL","津巴布韦金"],["XAU","黄金（盎司代码）"],["XAG","白银（盎司代码）"],["XDR","特别提款权"],["XXX","未知或无货币交易"]
+];
+function populateCurrencies(){for(const id of ['fx-a','fx-b']){const sel=$(id);sel.innerHTML='';for(const [code,name] of currencies){const op=document.createElement('option');op.value=code;op.textContent=code+' — '+name;sel.appendChild(op)}}$('fx-a').value='USD';$('fx-b').value='MYR'}
+function updateBusiness(){let cost=num('biz-cost'),price=num('biz-price'),qty=num('biz-qty'),discount=num('biz-discount'),extra=num('biz-extra'),target=num('biz-target');if(!validNonnegative(cost,price,qty,discount,extra,target)||discount>100||target>=100||!Number.isInteger(qty)){errBox('biz-result','请检查成本、售价、数量、折扣和目标毛利率；数量须为整数。');return}let actualPrice=price*(1-discount/100),unitCost=cost+extra,unitProfit=actualPrice-unitCost,margin=actualPrice>0?unitProfit/actualPrice*100:NaN,markup=unitCost>0?unitProfit/unitCost*100:NaN,rev=actualPrice*qty,totalCost=unitCost*qty,profit=rev-totalCost,targetPrice=target<100?unitCost/(1-target/100):NaN;resultBox('biz-result','整批毛利 '+money(profit),[['折后单价',money(actualPrice)],['单件毛利',money(unitProfit)],['毛利率',pct(margin)],['加价率',pct(markup)],['整批销售额',money(rev)],['整批成本',money(totalCost)],['目标毛利率所需售价',money(targetPrice)]],profit<0?['当前售价低于计入的单位成本。','bad']:'')}
+
+updateMap.business=updateBusiness;
+populateCurrencies();
+updateAll();updateBusiness();showCalc();
+</script>
+</body></html>
